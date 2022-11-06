@@ -113,7 +113,7 @@ for path, subdirs, files in os.walk(root_directory):
                     for j in range(patches_mask.shape[1]):
                         
                         single_patch_mask = patches_mask[i,j,:,:]
-                        #single_patch_img = (single_patch_img.astype('float32')) / 255. #No need to scale masks, but you can do it if you want
+                        single_patch_img = (single_patch_img.astype('float32')) / 255. #No need to scale masks, but you can do it if you want
                         single_patch_mask = single_patch_mask[0] #Drop the extra unecessary dimension that patchify adds.                               
                         mask_dataset.append(single_patch_mask) 
  
@@ -234,11 +234,11 @@ X_train, X_test, y_train, y_test = train_test_split(image_dataset, labels_cat, t
 #Parameters for model
 # Segmentation models losses can be combined together by '+' and scaled by integer or float factor
 # set class weights for dice_loss
-# from sklearn.utils.class_weight import compute_class_weight
+from sklearn.utils.class_weight import compute_class_weight
 
-# weights = compute_class_weight('balanced', np.unique(np.ravel(labels,order='C')), 
-#                               np.ravel(labels,order='C'))
-# print(weights)
+weights = compute_class_weight('balanced', np.unique(np.ravel(labels,order='C')),
+                              np.ravel(labels,order='C'))
+print(weights)
 
 weights = [0.1666, 0.1666, 0.1666, 0.1666, 0.1666, 0.1666]
 dice_loss = sm.losses.DiceLoss(class_weights=weights) 
@@ -259,14 +259,14 @@ def get_model():
 
 model = get_model()
 model.compile(optimizer='adam', loss=total_loss, metrics=metrics)
-#model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=metrics)
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=metrics)
 model.summary()
 
 
 history1 = model.fit(X_train, y_train, 
                     batch_size = 16, 
                     verbose=1, 
-                    epochs=10, 
+                    epochs=5, 
                     validation_data=(X_test, y_test), 
                     shuffle=False)
 
@@ -309,7 +309,7 @@ print(model_resnet_backbone.summary())
 history2=model_resnet_backbone.fit(X_train_prepr, 
           y_train,
           batch_size=16, 
-          epochs=10,
+          epochs=5,
           verbose=1,
           validation_data=(X_test_prepr, y_test))
 
