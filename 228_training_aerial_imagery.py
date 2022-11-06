@@ -40,7 +40,7 @@ from tensorflow.keras.metrics import MeanIoU
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 scaler = MinMaxScaler()
 
-root_directory = 'Semantic segmentation dataset/'
+root_directory = '/content/drive/MyDrive/kagglefolder/Semantic segmentation dataset'
 
 patch_size = 256
 
@@ -266,7 +266,7 @@ model.summary()
 history1 = model.fit(X_train, y_train, 
                     batch_size = 16, 
                     verbose=1, 
-                    epochs=100, 
+                    epochs=10, 
                     validation_data=(X_test, y_test), 
                     shuffle=False)
 
@@ -285,7 +285,7 @@ history1 = model.fit(X_train, y_train,
 ##Standardscaler 
 #Using categorical crossentropy as loss: 0.677
 
-#model.save('models/satellite_standard_unet_100epochs_7May2021.hdf5')
+model.save('models/satellite_standard_unet_100epochs_7May2021.hdf5')
 ############################################################
 #TRY ANOTHE MODEL - WITH PRETRINED WEIGHTS
 #Resnet backbone
@@ -300,7 +300,7 @@ X_test_prepr = preprocess_input(X_test)
 model_resnet_backbone = sm.Unet(BACKBONE, encoder_weights='imagenet', classes=n_classes, activation='softmax')
 
 # compile keras model with defined optimozer, loss and metrics
-#model_resnet_backbone.compile(optimizer='adam', loss=focal_loss, metrics=metrics)
+model_resnet_backbone.compile(optimizer='adam', loss=focal_loss, metrics=metrics)
 model_resnet_backbone.compile(optimizer='adam', loss='categorical_crossentropy', metrics=metrics)
 
 print(model_resnet_backbone.summary())
@@ -309,7 +309,7 @@ print(model_resnet_backbone.summary())
 history2=model_resnet_backbone.fit(X_train_prepr, 
           y_train,
           batch_size=16, 
-          epochs=100,
+          epochs=10,
           verbose=1,
           validation_data=(X_test_prepr, y_test))
 
