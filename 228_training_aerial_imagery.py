@@ -51,7 +51,7 @@ patch_size = 256
 #divide all images into patches of 256x256x3. 
 image_dataset = []  
 for path, subdirs, files in os.walk(root_directory):
-    #print(path)  
+    print(path)  
     dirname = path.split(os.path.sep)[-1]
     if dirname == 'images':   #Find all 'images' directories
         images = os.listdir(path)  #List of all image names in this subdirectory
@@ -63,7 +63,7 @@ for path, subdirs, files in os.walk(root_directory):
                 SIZE_Y = (image.shape[0]//patch_size)*patch_size #Nearest size divisible by our patch size
                 image = Image.fromarray(image)
                 image = image.crop((0 ,0, SIZE_X, SIZE_Y))  #Crop from top left corner
-                #image = image.resize((SIZE_X, SIZE_Y))  #Try not to resize for semantic segmentation
+                image = image.resize((SIZE_X, SIZE_Y))  #Try not to resize for semantic segmentation
                 image = np.array(image)             
        
                 #Extract patches from each image
@@ -78,7 +78,7 @@ for path, subdirs, files in os.walk(root_directory):
                         #Use minmaxscaler instead of just dividing by 255. 
                         single_patch_img = scaler.fit_transform(single_patch_img.reshape(-1, single_patch_img.shape[-1])).reshape(single_patch_img.shape)
                         
-                        #single_patch_img = (single_patch_img.astype('float32')) / 255. 
+                        single_patch_img = (single_patch_img.astype('float32')) / 255. 
                         single_patch_img = single_patch_img[0] #Drop the extra unecessary dimension that patchify adds.                               
                         image_dataset.append(single_patch_img)
                 
@@ -89,7 +89,7 @@ for path, subdirs, files in os.walk(root_directory):
  #For this specific dataset we could have added masks to the above code as masks have extension png
 mask_dataset = []  
 for path, subdirs, files in os.walk(root_directory):
-    #print(path)  
+    print(path)  
     dirname = path.split(os.path.sep)[-1]
     if dirname == 'masks':   #Find all 'images' directories
         masks = os.listdir(path)  #List of all image names in this subdirectory
@@ -102,7 +102,7 @@ for path, subdirs, files in os.walk(root_directory):
                 SIZE_Y = (mask.shape[0]//patch_size)*patch_size #Nearest size divisible by our patch size
                 mask = Image.fromarray(mask)
                 mask = mask.crop((0 ,0, SIZE_X, SIZE_Y))  #Crop from top left corner
-                #mask = mask.resize((SIZE_X, SIZE_Y))  #Try not to resize for semantic segmentation
+                mask = mask.resize((SIZE_X, SIZE_Y))  #Try not to resize for semantic segmentation
                 mask = np.array(mask)             
        
                 #Extract patches from each image
@@ -236,9 +236,9 @@ X_train, X_test, y_train, y_test = train_test_split(image_dataset, labels_cat, t
 # set class weights for dice_loss
 from sklearn.utils.class_weight import compute_class_weight
 
-weights = compute_class_weight('balanced', np.unique(np.ravel(labels,order='C')),
-                              np.ravel(labels,order='C'))
-print(weights)
+#weights = compute_class_weight('balanced', np.unique(np.ravel(labels,order='C')),
+#                              np.ravel(labels,order='C'))
+#print(weights)
 
 weights = [0.1666, 0.1666, 0.1666, 0.1666, 0.1666, 0.1666]
 dice_loss = sm.losses.DiceLoss(class_weights=weights) 
@@ -266,7 +266,7 @@ model.summary()
 history1 = model.fit(X_train, y_train, 
                     batch_size = 16, 
                     verbose=1, 
-                    epochs=5, 
+                    epochs=10, 
                     validation_data=(X_test, y_test), 
                     shuffle=False)
 
@@ -309,7 +309,7 @@ print(model_resnet_backbone.summary())
 history2=model_resnet_backbone.fit(X_train_prepr, 
           y_train,
           batch_size=16, 
-          epochs=5,
+          epochs=10,
           verbose=1,
           validation_data=(X_test_prepr, y_test))
 
@@ -377,7 +377,7 @@ import random
 test_img_number = random.randint(0, len(X_test))
 test_img = X_test[test_img_number]
 ground_truth=y_test_argmax[test_img_number]
-#test_img_norm=test_img[:,:,0][:,:,None]
+test_img_norm=test_img[:,:,0][:,:,None]
 test_img_input=np.expand_dims(test_img, 0)
 prediction = (model.predict(test_img_input))
 predicted_img=np.argmax(prediction, axis=3)[0,:,:]
