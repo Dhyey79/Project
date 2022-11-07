@@ -12,9 +12,10 @@
 ![Screenshot 2022-11-06 225251](https://user-images.githubusercontent.com/98288056/200226339-9d87b130-711e-477b-b99f-6727f10dfe72.png)
 ![Screenshot 2022-11-06 225356](https://user-images.githubusercontent.com/98288056/200226350-c97c2785-db04-497a-a397-c12205d17374.png)
 ![Screenshot 2022-11-06 232700](https://user-images.githubusercontent.com/98288056/200226552-85a5a256-25e7-4a9f-8ee1-88158b4e2c4d.png)
-Where it was good. Then from the other file simple_multi_unet_model we imported the multi_unetmodel and jacard coef where the image model was made 
+
+The dataset was first downloaded from Kaggle to Google Drive, where it was then unzipped and installed. Following the loading of the dataset images from Google Collab, the correct directory is navigated, the image and masks are taken, and each image is read as BGR in the colors of blue, green, and red before being divided into patches of 256. Then I extracted patches from each image using the pacifying library. Then I performed the same action using masks. then the designated building color code The unlabeled elements of land, water, vegetation, and roads were transformed into RBG arrays before being given labels. The image was then double-checked to see if it was what was anticipated where it was good. Then from the other file simple_multi_unet_model we imported the multi_unetmodel and jacard coef where the image model was made 
 with height width channels and then was compiled in optimizer ‘adam’ where is all the patches of images were checked and given, they are all multiples 
-256 since our patch size was 256. Then the model was loaded in history1 and then did model fir with batch size of 16 and epochs of 100. Where I received 
+256 since our patch size was 256. Then the model was loaded in history1 and then did model fir with batch size of 16 and epochs of 20. Where I received 
 the accuracy of 61.62 percent. Then tested for training and validation loss. Although not required but also plotted the Graph for IOU And finally I get 
 these results which were working well. Then, since our patch size was 256, we imported the multi unetmodel and jacard coef from another file called simple 
 multi unet model. This image model was created with height and width channels, and it was then assembled in the optimizer "Adam." All of the image patches 
