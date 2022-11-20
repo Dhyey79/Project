@@ -1,18 +1,14 @@
 # https://youtu.be/jvZm8REF2KY
 """
 Explanation of using RGB masks: https://youtu.be/sGAwx4GMe4E
-
 https://www.kaggle.com/humansintheloop/semantic-segmentation-of-aerial-imagery
-
 The dataset consists of aerial imagery of Dubai obtained by MBRSC satellites and annotated with pixel-wise semantic segmentation in 6 classes. The total volume of the dataset is 72 images grouped into 6 larger tiles. The classes are:
-
 Building: #3C1098
 Land (unpaved area): #8429F6
 Road: #6EC1E4
 Vegetation: #FEDD3A
 Water: #E2A929
 Unlabeled: #9B9B9B
-
 Use patchify....
 Tile 1: 797 x 644 --> 768 x 512 --> 6
 Tile 2: 509 x 544 --> 512 x 256 --> 2
@@ -24,7 +20,6 @@ Tile 7: 1817 x 2061 --> 1792 x 2048 --> 56
 Tile 8: 2149 x 1479 --> 1280 x 2048 --> 40
 Total 9 images in each folder * (145 patches) = 1305
 Total 1305 patches of size 256x256
-
 """
 
 import os
@@ -40,7 +35,7 @@ from tensorflow.keras.metrics import MeanIoU
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 scaler = MinMaxScaler()
 
-root_directory = 'Semantic segmentation dataset/'
+root_directory = os.environ['KAGGLE_CONFIG_DIR'] = "/content/drive/MyDrive/kagglefolder/Semantic segmentation dataset"
 
 patch_size = 256
 
@@ -140,16 +135,12 @@ the first hexadecimal digit (between 0 and F, where the letters A to F represent
 the numbers 10 to 15). The remainder gives the second hexadecimal digit. 
 0-9 --> 0-9
 10-15 --> A-F
-
 Example: RGB --> R=201, G=, B=
-
 R = 201/16 = 12 with remainder of 9. So hex code for R is C9 (remember C=12)
-
 Calculating RGB from HEX: #3C1098
 3C = 3*16 + 12 = 60
 10 = 1*16 + 0 = 16
 98 = 9*16 + 8 = 152
-
 """
 #Convert HEX to RGB array
 # Try the following to understand how python handles hex values...
@@ -285,7 +276,7 @@ history1 = model.fit(X_train, y_train,
 ##Standardscaler 
 #Using categorical crossentropy as loss: 0.677
 
-#model.save('models/satellite_standard_unet_100epochs_7May2021.hdf5')
+model.save('/content/drive/MyDrive/Project/Project/models/satellite_standard_unet_100epochs_7May2021.hdf5')
 ############################################################
 #TRY ANOTHE MODEL - WITH PRETRINED WEIGHTS
 #Resnet backbone
@@ -353,8 +344,8 @@ plt.show()
 
 ##################################
 from keras.models import load_model
-model = load_model("models/satellite_standard_unet_100epochs.hdf5",
-                   custom_objects={'dice_loss_plus_2focal_loss': total_loss,
+model = load_model("/content/drive/MyDrive/Project/Project/models/satellite_standard_unet_100epochs_7May2021.hdf5",
+                   custom_objects={'dice_loss_plus_1focal_loss': total_loss,
                                    'jacard_coef':jacard_coef})
 
 #IOU
@@ -396,3 +387,4 @@ plt.imshow(predicted_img)
 plt.show()
 
 #####################################################################
+
